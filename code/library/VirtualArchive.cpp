@@ -33,10 +33,10 @@ VirtualArchiveWriter::~VirtualArchiveWriter()
 
 }
 
-RF_Type::Bool VirtualArchiveWriter::Open(const RF_Type::String& path)
+RF_Type::Bool VirtualArchiveWriter::Open(const RF_Type::String& Path)
 {
     RF_Type::String fullPath;
-    RF_SysFile::RealPath(path, fullPath);
+    RF_SysFile::RealPath(Path, fullPath);
     return Open(RF_IO::Uri("file:///"_rfs + fullPath));
 }
 
@@ -64,11 +64,11 @@ RF_Type::Bool VirtualArchiveWriter::Open(const RF_IO::Uri& Path)
     return result;
 }
 
-bool VirtualArchiveWriter::Append(const RF_Type::String& Filename,
-    RF_Mem::AutoPointerArray<RF_Type::UInt8>& Data)
+RF_Type::Bool VirtualArchiveWriter::Append(const RF_Type::String& Filename,
+    const RF_Mem::AutoPointerArray<RF_Type::UInt8>& Data)
 {    
-    bool result = false;
-    if(Data.Count() < m_PackageSize && Data.Count() > 0 && Data)
+    RF_Type::Bool result = false;
+    if(Data.Count() < m_PackageSize && Data.Count() > 0 && !Data.IsEmpty())
     {
         RF_Type::Size lastPackageSize = 0;
         FileNode node;
@@ -133,14 +133,19 @@ VirtualArchiveReader::~VirtualArchiveReader()
 
 RF_Type::Bool VirtualArchiveReader::Open(const RF_Type::String& Path)
 {
-    RF_Type::Bool result = false;
-    RF_IO::Directory dir;
     RF_Type::String fullPath;
     RF_SysFile::RealPath(Path, fullPath);
-    dir.SetLocation("file:///"_rfs + fullPath);
+    return Open(RF_IO::Uri("file:///"_rfs + fullPath));
+}
+
+RF_Type::Bool VirtualArchiveReader::Open(const RF_IO::Uri& Path)
+{
+    RF_IO::Directory dir;
+    dir.SetLocation(Path);
+    RF_Type::Bool result = false;
     if(dir.Exists() && dir.IsDirectory())
     {
-        m_Path = "file:///"_rfs + fullPath;
+        m_Path = dir.Location().OriginalString();
         RF_IO::File file;
         file.SetLocation(RF_IO::Uri(m_Path + "/0.var"_rfs));
         m_Data = file.Read();

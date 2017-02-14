@@ -6,13 +6,18 @@ include("Integrate.cmake")
 
 # integrate the Radon framework project
 rcf_addlocation(RADONFRAMEWORK "git" "https://github.com/tak2004/RadonFramework.git")
+set(RADONFRAMEWORK_USE_OPENGL OFF CACHE BOOL "" FORCE)
+set(RADONFRAMEWORK_USE_FORMS OFF CACHE BOOL "" FORCE)
 Integrate(RADONFRAMEWORK "Radon framework" "RADONFRAMEWORK_HOME")
 
 # put the libraries to the dist directory
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../dist)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
 
-# allow to compile as shared or static library
-OPTION(ARGONA_BUILD_SHARED_LIBS "Build ArgonA as shared library" OFF)
+# additional targets
+OPTION(ARGONA_BUILD_SHARED_LIBS "Build ArgonA shared library" OFF)
+OPTION(ARGONA_BUILD_CONSOLE "Build ArgonA console" ON)
 
 set(srclist "code/library/VirtualArchive.cpp")
 set(hdrlist "code/library/include/ArgonA/VirtualArchive.hpp")
@@ -33,4 +38,15 @@ set(LIBARGONA_FILES ${srclist} ${hdrlist})
 Generate(SHARED LIBARGONA libArgonA "Libraries")
 AddDependency(LIBARGONA ArgonA)
 Finalize(LIBARGONA)
+endif()
+
+if(${ARGONA_BUILD_CONSOLE})
+set(srclist "code/client/main.cpp" "code/client/console.cpp")
+set(hdrlist "code/client/console.hpp")
+source_group("Include" FILES ${hdrlist})
+source_group("Source" FILES ${srclist})
+set(ARGONACONSOLE_FILES ${srclist} ${hdrlist})
+Generate(EXECUTABLE ARGONACONSOLE Console "Tools")
+AddDependency(ARGONACONSOLE ArgonA)
+Finalize(ARGONACONSOLE)
 endif()

@@ -51,7 +51,7 @@ public:
     RF_Type::Bool Open(const RF_IO::Uri& Path);
 
     RF_Type::Bool Append(const RF_Type::String& Filename, 
-        RF_Mem::AutoPointerArray<RF_Type::UInt8>& Data);
+        const RF_Mem::AutoPointerArray<RF_Type::UInt8>& Data);
 
     void Close();
 protected:
@@ -72,6 +72,7 @@ public:
     ~VirtualArchiveReader();
 
     RF_Type::Bool Open(const RF_Type::String& Path);
+    RF_Type::Bool Open(const RF_IO::Uri& Path);
 
     void Close();
 
