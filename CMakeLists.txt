@@ -1,19 +1,22 @@
-cmake_minimum_required(VERSION 3.0)
-project(ArgonA)
+# Define a project if this file wasn't included.
+if(NOT CMAKE_PROJECT_NAME OR "${CMAKE_PROJECT_NAME}" MATCHES "^ArgonA$")
+    cmake_minimum_required(VERSION 3.0)
+    project(ArgonA)
+    set(RADONFRAMEWORK_USE_OPENGL OFF CACHE BOOL "" FORCE)
+    set(RADONFRAMEWORK_USE_FORMS OFF CACHE BOOL "" FORCE)
+    
+    # put the libraries to the dist directory
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)    
+endif()
 
 # use Radon CMake framework
 include("Integrate.cmake")
 
 # integrate the Radon framework project
 rcf_addlocation(RADONFRAMEWORK "git" "https://github.com/tak2004/RadonFramework.git")
-set(RADONFRAMEWORK_USE_OPENGL OFF CACHE BOOL "" FORCE)
-set(RADONFRAMEWORK_USE_FORMS OFF CACHE BOOL "" FORCE)
 Integrate(RADONFRAMEWORK "Radon framework" "RADONFRAMEWORK_HOME")
-
-# put the libraries to the dist directory
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dist)
 
 # additional targets
 OPTION(ARGONA_BUILD_SHARED_LIBS "Build ArgonA shared library" OFF)
